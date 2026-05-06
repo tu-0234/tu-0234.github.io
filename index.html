@@ -120,7 +120,7 @@
         centerLabel.position.set(0, 0.1, 0);
         scene.add(centerLabel);
 
-        // --- 节点数据（增加跳转子页面路径）---
+        // --- 节点数据（已去掉图标字段）---
         const nodesData = [
             { type: 'video', name: '非凡“十四五”', color: 0x42a5f5, pos: [3.2, 1.6, 2.2], url: 'sub0.html' },
             { type: 'video', name: '领航数字未来', color: 0xab47bc, pos: [0.5, 2.8, 2.9], url: 'sub1.html' },
@@ -141,7 +141,8 @@
             const miniGlow = new THREE.Mesh(new THREE.SphereGeometry(0.68, 24, 24), new THREE.MeshBasicMaterial({ color: node.color, transparent: true, opacity: 0.15, side: THREE.BackSide }));
             planet.add(miniGlow);
             const div = document.createElement('div');
-            div.textContent = `${node.icon} ${node.name}`;
+            // 修复 undefined：只显示 name
+            div.textContent = `${node.name}`;
             div.style.cssText = `color:#fff; font-size:16px; font-weight:600; text-shadow:0 0 8px rgba(0,0,0,0.5); background:rgba(8,16,32,0.8); backdrop-filter:blur(6px); padding:4px 14px; border-radius:40px; border:1px solid ${new THREE.Color(node.color).getStyle()}; white-space:nowrap; font-family:Inter, sans-serif; pointer-events:none;`;
             const label = new CSS2DObject(div);
             label.position.set(node.pos[0], node.pos[1] - 0.92, node.pos[2]);
@@ -186,7 +187,7 @@
         fillLight.position.set(1, 2, 2);
         scene.add(fillLight);
 
-        // 点击跳转（替换原模态框）
+        // 点击跳转
         const raycaster = new THREE.Raycaster();
         const mouse = new THREE.Vector2();
         window.addEventListener('click', (event) => {
