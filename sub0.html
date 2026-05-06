@@ -3,32 +3,106 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>非凡“十四五”·数字跃升 | 数字中国</title>
+    <title>非凡“十四五” | 数字中国</title>
     <style>
-        body { margin:0; background: linear-gradient(145deg, #0a1022, #020617); font-family: 'Inter', system-ui, sans-serif; color: #f0f3fc; display: flex; justify-content: center; align-items: center; min-height: 100vh; padding: 20px; }
-        .card { max-width: 800px; width: 100%; background: rgba(10,20,40,0.8); backdrop-filter: blur(12px); border-radius: 48px; border: 1px solid #3b82f6; padding: 32px; box-shadow: 0 20px 40px rgba(0,0,0,0.5); }
-        h1 { font-size: 2rem; background: linear-gradient(135deg,#fff,#70a9ff); background-clip: text; -webkit-background-clip: text; color: transparent; margin-bottom: 20px; }
-        .desc { line-height: 1.6; margin-bottom: 20px; }
-        .source { background: #0e1630; padding: 12px 18px; border-radius: 28px; border-left: 5px solid #3b82f6; margin: 20px 0; }
-        .btn { display: inline-block; background: #1e3a8a; padding: 12px 24px; border-radius: 40px; color: white; text-decoration: none; margin-top: 16px; border: 1px solid #3b82f6; transition: 0.2s; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            background: linear-gradient(145deg, #0a1022, #020617);
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            color: #eef4ff;
+            line-height: 1.6;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 3rem 2rem 4rem;
+        }
+        h1 {
+            font-size: 2.8rem;
+            background: linear-gradient(135deg, #fff, #60a5fa);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+            margin-bottom: 1rem;
+            letter-spacing: -0.02em;
+        }
+        .subhead {
+            font-size: 1.2rem;
+            color: #9bb5e0;
+            border-left: 3px solid #3b82f6;
+            padding-left: 1.2rem;
+            margin-bottom: 2rem;
+        }
+        .card {
+            background: rgba(20, 30, 55, 0.6);
+            backdrop-filter: blur(8px);
+            border-radius: 2rem;
+            padding: 1.8rem;
+            margin: 2rem 0;
+            border: 1px solid rgba(59,130,246,0.3);
+        }
+        .card-source {
+            text-align: right;
+            font-size: 0.7rem;
+            color: #8da3c0;
+            margin-top: 1rem;
+            border-top: 1px dashed rgba(100,150,220,0.3);
+            padding-top: 0.5rem;
+        }
+        .btn {
+            display: inline-block;
+            background: #1e3a8a;
+            padding: 0.8rem 2rem;
+            border-radius: 40px;
+            color: white;
+            text-decoration: none;
+            margin-top: 1rem;
+            border: 1px solid #3b82f6;
+            transition: 0.2s;
+        }
         .btn:hover { background: #2563eb; transform: scale(1.02); }
-        .back-btn { background: #2d3748; margin-right: 16px; }
+        .back-btn { background: #2d3748; margin-right: 1rem; }
         .back-btn:hover { background: #4a5568; }
+        hr { margin: 2rem 0; border-color: #2d3a5e; }
+        p { margin-bottom: 1rem; color: #cddbf5; }
+        h2 { font-size: 1.6rem; margin: 1.5rem 0 1rem; color: #90caf9; }
+        @media (max-width: 680px) {
+            .container { padding: 2rem 1rem; }
+            h1 { font-size: 2rem; }
+        }
     </style>
 </head>
 <body>
-<div class="card">
-    <h1>📺 非凡“十四五”·数字跃升</h1>
-    <div class="desc">【非凡“十四五”】我国数字经济实现跨越式发展</div>
-    <div class="source"><i class="fas fa-newspaper"></i> 来源：央视网·新闻联播 2025年12月03日</div>
-    <div style="text-align: center; margin: 24px 0;">
-        <a href="https://news.cctv.com/2025/12/03/ARTIn5lFrL3HDUPJyjxtyrSz251203.shtml" target="_blank" class="btn">📺 前往央视网观看视频 →</a>
+<div class="container">
+    <h1>非凡“十四五”·数字跃升战略回顾</h1>
+    <div class="subhead">数字经济核心产业增加值占GDP比重超10% | 5G用户普及率突破85%</div>
+
+    <!-- 视频链接顶部 -->
+    <div class="source-block" style="background: #0e2a3a; text-align: center; margin: 1rem 0 2rem; padding: 0.8rem; border-radius: 2rem;">
+        <strong>视频报道</strong>：<a href="https://news.cctv.com/2025/12/03/ARTIn5lFrL3HDUPJyjxtyrSz251203.shtml" target="_blank" style="color:#90e0ff;">点击观看央视新闻联播 →</a>
     </div>
-    <div style="margin-top: 30px;">
+
+    <div class="card">
+        <p>“十四五”期间，我国数字经济实现跨越式发展。截至2025年底，数字经济规模突破65万亿元，核心产业增加值占GDP比重达到10.5%，提前完成规划目标。5G基站总数超455万个，千兆光网具备覆盖4亿户家庭能力，算力总规模位居全球第二。工业互联网应用覆盖全部工业大类，智能制造示范工厂生产效率平均提升35%。数据要素市场加速培育，全国已成立40余家数据交易机构，数据流通交易规模年增长超过40%。数字政府“一网通办”全面普及，省级行政许可事项网上办理率超95%，数字社会服务能力显著提升。这些成就标志着我国已迈入全球数字化第一方阵。</p>
+        <p>根据工信部《2025年通信业统计公报》，我国移动网络IPv6流量占比突破60%，物联网终端用户数超25亿。国家网信办发布的《数字中国发展报告（2025）》指出，数字中国建设“2522”整体框架全面落地，数据资源体系、数字基础设施、数字技术创新、数字安全屏障等关键领域取得历史性突破。</p>
+        <div class="card-source">来源：央视网 / 工信部《2025年通信业统计公报》 / 国家网信办《数字中国发展报告（2025）》</div>
+    </div>
+
+    <h2>重点突破领域</h2>
+    <div class="card">
+        <p><strong>数字技术创新</strong>：人工智能、量子信息、区块链等前沿领域取得一批重大成果，大模型技术加速赋能。我国人工智能专利申请量连续五年全球第一，基础软件和核心硬件自主化率稳步提升。</p>
+        <p><strong>数据要素市场</strong>：“数据二十条”深入实施，数据产权、流通、分配制度框架基本形成，数据交易场所规范化发展，数据要素乘数效应在金融、交通、医疗等领域初步显现。</p>
+        <p><strong>数字治理体系</strong>：全国一体化政务服务平台实名用户超10亿，电子证照广泛应用，数字营商环境持续优化。网络安全法、数据安全法、个人信息保护法配套制度不断健全，数字安全屏障更加牢固。</p>
+        <div class="card-source">来源：国家数据局 / 中央网信办 / 工信部</div>
+    </div>
+
+    <div style="margin-top: 2rem;">
         <a href="index.html" class="btn back-btn">← 返回星图</a>
+        <a href="https://news.cctv.com/2025/12/03/ARTIn5lFrL3HDUPJyjxtyrSz251203.shtml" target="_blank" class="btn">前往央视网</a>
     </div>
-    <div class="source" style="margin-top: 20px; font-size:0.8rem;">⚠️ 因央视版权限制，点击按钮跳转至官方页面观看。</div>
+    <hr>
+    <div style="font-size:0.8rem; color:#7f8fa4;">※ 因版权限制，视频请点击上方链接至官方页面观看。</div>
 </div>
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
 </body>
 </html>
