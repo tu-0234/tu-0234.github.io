@@ -3,19 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>数字中国战略星图 | 乘“数”而上 智启未来</title>
+    <title>数字中国战略星图 | 乘“数”而上 智启未来 | 点击中心 星轨流转</title>
     <style>
         body { margin: 0; overflow: hidden; font-family: 'Microsoft YaHei', 'Inter', 'Segoe UI', 'PingFang SC', Roboto, sans-serif; color: white; }
-        #info { position: absolute; top: 20px; left: 20px; z-index: 100; background: rgba(0,0,0,0.65); backdrop-filter: blur(8px); padding: 8px 20px; border-radius: 40px; pointer-events: none; font-size: 14px; border-left: 4px solid #3b82f6; font-weight: 500; }
-        #controls-tip { position: absolute; bottom: 20px; left: 20px; z-index: 100; background: rgba(0,0,0,0.5); padding: 6px 14px; border-radius: 24px; font-size: 12px; pointer-events: none; backdrop-filter: blur(4px); }
-        #reset-view { position: absolute; bottom: 20px; right: 20px; z-index: 100; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border: 1px solid #3b82f6; padding: 8px 16px; border-radius: 30px; color: white; cursor: pointer; font-size: 14px; transition: 0.2s; }
-        #reset-view:hover { background: #1e3a8a; }
+        #info { 
+            position: absolute; top: 20px; left: 20px; z-index: 100; 
+            background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); 
+            padding: 10px 22px; border-radius: 40px; pointer-events: none; 
+            font-size: 14px; border-left: 4px solid #3b82f6; font-weight: 500;
+            letter-spacing: 0.5px;
+        }
+        #controls-tip { 
+            position: absolute; bottom: 20px; left: 20px; z-index: 100; 
+            background: rgba(0,0,0,0.55); padding: 6px 14px; border-radius: 24px; 
+            font-size: 12px; pointer-events: none; backdrop-filter: blur(4px);
+        }
+        #reset-view { 
+            position: absolute; bottom: 20px; right: 20px; z-index: 100; 
+            background: rgba(0,0,0,0.65); backdrop-filter: blur(4px); 
+            border: 1px solid #3b82f6; padding: 8px 18px; border-radius: 30px; 
+            color: white; cursor: pointer; font-size: 14px; transition: 0.2s;
+            font-weight: 500;
+        }
+        #reset-view:hover { background: #1e3a8a; border-color: #60a5fa; }
+        #loading { 
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+            z-index: 200; font-size: 18px; color: #60a5fa; background: rgba(0,0,0,0.6);
+            padding: 12px 28px; border-radius: 60px; backdrop-filter: blur(8px);
+            pointer-events: none;
+            font-weight: 500;
+        }
+        .center-hint {
+            position: absolute; bottom: 100px; left: 50%; transform: translateX(-50%);
+            background: rgba(0,0,0,0.65); backdrop-filter: blur(10px);
+            padding: 8px 24px; border-radius: 48px; font-size: 14px;
+            color: #bbd9ff; border: 1px solid #3b82f6; pointer-events: none;
+            z-index: 100; white-space: nowrap;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: 0.3s;
+            text-align: center;
+            line-height: 1.4;
+        }
+        .center-hint i { font-style: normal; display: inline-block; animation: gentlePulse 1.8s infinite; }
+        @keyframes gentlePulse {
+            0% { opacity: 0.6; text-shadow: 0 0 0px #3b82f6; }
+            100% { opacity: 1; text-shadow: 0 0 8px #3b82f6; }
+        }
+        @media (max-width: 600px) {
+            .center-hint { font-size: 11px; bottom: 75px; white-space: nowrap; padding: 6px 16px; }
+            #info { font-size: 10px; top: 12px; left: 12px; }
+        }
     </style>
 </head>
 <body>
-    <div id="info">🌌 数字中国战略星图 | 拖拽旋转 · 点击星球跳转详情页</div>
+    <div id="info">🌌 数字中国战略星图 | 拖拽旋转视角 · 点击星球跳转详情</div>
     <div id="controls-tip">🖱️ 鼠标拖拽旋转 | 右键平移 | 滚轮缩放</div>
     <button id="reset-view">🔄 重置视角</button>
+    <div class="center-hint" id="rotateHint">✨ 点击中央【数字中国】星球 ✨<br><span style="font-size:11px;">启动旋转一周</span></div>
+    <div id="loading">加载数字中国星图中...✨</div>
 
     <script type="importmap">
         {
@@ -34,7 +80,7 @@
         // --- 初始化场景 ---
         const scene = new THREE.Scene();
         scene.background = new THREE.Color(0x010318);
-        scene.fog = new THREE.FogExp2(0x010318, 0.0007);
+        scene.fog = new THREE.FogExp2(0x010318, 0.0006);
         const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 2000);
         camera.position.set(6, 4, 9);
         const renderer = new THREE.WebGLRenderer({ antialias: true });
@@ -62,171 +108,553 @@
             controls.update();
         });
 
-        // 星空背景
-        const starGeo = new THREE.BufferGeometry();
-        const starCount = 2000;
-        const starPos = new Float32Array(starCount * 3);
-        for (let i = 0; i < starCount; i++) {
-            starPos[i*3] = (Math.random() - 0.5) * 1000;
-            starPos[i*3+1] = (Math.random() - 0.5) * 600;
-            starPos[i*3+2] = (Math.random() - 0.5) * 300 - 80;
-        }
-        starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
-        const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ color: 0xffffff, size: 0.2, transparent: true, opacity: 0.7 }));
-        scene.add(stars);
-        const starGeo2 = new THREE.BufferGeometry();
-        const starPos2 = new Float32Array(1000 * 3);
-        for (let i = 0; i < 1000; i++) {
-            starPos2[i*3] = (Math.random() - 0.5) * 1400;
-            starPos2[i*3+1] = (Math.random() - 0.5) * 800;
-            starPos2[i*3+2] = (Math.random() - 0.5) * 400 - 150;
-        }
-        starGeo2.setAttribute('position', new THREE.BufferAttribute(starPos2, 3));
-        const stars2 = new THREE.Points(starGeo2, new THREE.PointsMaterial({ color: 0xaaccff, size: 0.12 }));
-        scene.add(stars2);
+        // ========== 动态分层星空 ==========
+        const createStarField = (count, size, color, depthRange, speed) => {
+            const starGeo = new THREE.BufferGeometry();
+            const starPos = new Float32Array(count * 3);
+            for (let i = 0; i < count; i++) {
+                starPos[i*3] = (Math.random() - 0.5) * depthRange.x;
+                starPos[i*3+1] = (Math.random() - 0.5) * depthRange.y;
+                starPos[i*3+2] = (Math.random() - 0.5) * depthRange.z - 80;
+            }
+            starGeo.setAttribute('position', new THREE.BufferAttribute(starPos, 3));
+            const stars = new THREE.Points(starGeo, new THREE.PointsMaterial({ 
+                color: color, size: size, transparent: true, opacity: 0.7,
+                sizeAttenuation: true
+            }));
+            stars.userData = { speed: speed };
+            scene.add(stars);
+            return stars;
+        };
+        const starLayers = [
+            createStarField(3000, 0.2, 0xffffff, {x:1000,y:600,z:300}, 0.0003),
+            createStarField(2000, 0.15, 0xaaccff, {x:1400,y:800,z:400}, 0.0002),
+            createStarField(1500, 0.1, 0x60a5fa, {x:1800,y:1000,z:500}, 0.0001)
+        ];
 
-        // 中心球体
-        const coreMat = new THREE.MeshStandardMaterial({ color: 0x1e6eff, emissive: 0x0a2a6a, emissiveIntensity: 0.5, metalness: 0.7, roughness: 0.2 });
-        const coreSphere = new THREE.Mesh(new THREE.SphereGeometry(1.2, 64, 64), coreMat);
+        // ========== 中心球体：数字中国 ==========
+        const coreMat = new THREE.MeshStandardMaterial({ 
+            color: 0x1e6eff, 
+            emissive: 0x0a2a6a, 
+            emissiveIntensity: 0.55, 
+            metalness: 0.7, 
+            roughness: 0.2 
+        });
+        const coreSphere = new THREE.Mesh(new THREE.SphereGeometry(1.25, 80, 80), coreMat);
+        coreSphere.userData = { isCore: true, interactive: true };
         scene.add(coreSphere);
-        const glowMat = new THREE.MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.12, side: THREE.BackSide });
-        const glowSphere = new THREE.Mesh(new THREE.SphereGeometry(1.35, 32, 32), glowMat);
+        // 光晕
+        const glowMat = new THREE.MeshBasicMaterial({ 
+            color: 0x3b82f6, 
+            transparent: true, 
+            opacity: 0.12, 
+            side: THREE.BackSide 
+        });
+        const glowSphere = new THREE.Mesh(new THREE.SphereGeometry(1.42, 48, 48), glowMat);
         scene.add(glowSphere);
-        // 粒子环
-        const ringParticleCount = 800;
+        // 中心流光环
+        const flowRingCount = 800;
+        const flowRingGeo = new THREE.BufferGeometry();
+        const flowRingPos = new Float32Array(flowRingCount * 3);
+        for (let i = 0; i < flowRingCount; i++) {
+            const angle = (i / flowRingCount) * Math.PI * 2;
+            const rad = 1.6 + Math.random() * 0.3;
+            flowRingPos[i*3] = Math.cos(angle) * rad;
+            flowRingPos[i*3+1] = Math.sin(angle) * rad * 0.5;
+            flowRingPos[i*3+2] = Math.sin(angle) * rad * 0.8;
+        }
+        flowRingGeo.setAttribute('position', new THREE.BufferAttribute(flowRingPos, 3));
+        const flowRingMat = new THREE.PointsMaterial({ 
+            color: 0x81c3fd, 
+            size: 0.08, 
+            transparent: true, 
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
+        });
+        const flowRing = new THREE.Points(flowRingGeo, flowRingMat);
+        scene.add(flowRing);
+        // 增强粒子环
+        const ringParticleCount = 900;
         const ringGeo = new THREE.BufferGeometry();
         const ringPositions = new Float32Array(ringParticleCount * 3);
         for (let i = 0; i < ringParticleCount; i++) {
             const angle = (i / ringParticleCount) * Math.PI * 2;
-            const rad = 1.9;
+            const rad = 2.0;
             ringPositions[i*3] = Math.cos(angle) * rad;
-            ringPositions[i*3+1] = Math.sin(angle) * rad * 0.4;
+            ringPositions[i*3+1] = Math.sin(angle) * rad * 0.35;
             ringPositions[i*3+2] = Math.sin(angle) * rad * 0.7;
         }
         ringGeo.setAttribute('position', new THREE.BufferAttribute(ringPositions, 3));
-        const ringPoints = new THREE.Points(ringGeo, new THREE.PointsMaterial({ color: 0x5a9eff, size: 0.06 }));
+        const ringPoints = new THREE.Points(ringGeo, new THREE.PointsMaterial({ 
+            color: 0x5a9eff, 
+            size: 0.06,
+            blending: THREE.AdditiveBlending 
+        }));
         scene.add(ringPoints);
-        // 中心文字
+
+        // 中心文字标签
         const centerDiv = document.createElement('div');
         centerDiv.innerHTML = '✨ 数字中国 ✨<br><span style="font-size:12px;">乘数而上 智启未来</span>';
         centerDiv.style.fontSize = '20px';
         centerDiv.style.fontWeight = 'bold';
         centerDiv.style.textAlign = 'center';
-        centerDiv.style.background = 'linear-gradient(135deg, #fff, #60a5fa)';
-        centerDiv.style.backgroundClip = 'text';
-        centerDiv.style.webkitBackgroundClip = 'text';
-        centerDiv.style.color = 'transparent';
+        centerDiv.style.color = '#ffffff';          // 纯白色
+        centerDiv.style.textShadow = '0 0 12px rgba(0,0,0,0.5), 0 0 5px #3b82f6'; // 增加一点发光感
+        centerDiv.style.backgroundColor = 'transparent';  // 去掉渐变背景
+        centerDiv.style.background = 'none';              // 确保无渐变
+        centerDiv.style.pointerEvents = 'none';
         const centerLabel = new CSS2DObject(centerDiv);
-        centerLabel.position.set(0, 0.1, 0);
+        centerLabel.position.set(0, 0.2, 0);
         scene.add(centerLabel);
 
-        // --- 节点数据（已去掉图标字段）---
+        // 为光标增加可点击提示环
+        const coreInteractiveRing = new THREE.Mesh(
+            new THREE.RingGeometry(1.45, 1.75, 32),
+            new THREE.MeshBasicMaterial({ color: 0x3b82f6, side: THREE.DoubleSide, transparent: true, opacity: 0.25, blending: THREE.AdditiveBlending })
+        );
+        coreInteractiveRing.position.set(0, 0, 0);
+        coreInteractiveRing.rotation.x = -Math.PI / 2;
+        scene.add(coreInteractiveRing);
+
+        // --- 节点数据 (战略星球)---
         const nodesData = [
             { type: 'video', name: '非凡“十四五”', color: 0x42a5f5, pos: [3.2, 1.6, 2.2], url: 'sub0.html' },
             { type: 'video', name: '领航数字未来', color: 0xab47bc, pos: [0.5, 2.8, 2.9], url: 'sub1.html' },
-            { type: 'video', name: '“十五五”新蓝图', color: 0x26a69a, pos: [-2.5, 1.9, 2.8], url: 'sub2.html' },
+            { type: 'text', name: '“十五五”新蓝图', color: 0x26a69a, pos: [-2.5, 1.9, 2.8], url: 'sub2.html' },
             { type: 'text', name: '科技创新战略', color: 0xffa726, pos: [2.2, -1.2, -2.8], url: 'sub3.html' },
             { type: 'text', name: '数实深度融合', color: 0x66bb6a, pos: [-1.8, -1.5, -3.0], url: 'sub4.html' },
             { type: 'text', name: '产业AI新引擎', color: 0xef5350, pos: [0, -0.5, -3.8], url: 'sub5.html' }
         ];
 
+        // 存储星球对象及初始数据
         const planetMeshes = [];
+        const originalPositions = [];   // 原始绝对坐标 (用于旋转运算)
+        
         nodesData.forEach((node, idx) => {
-            const geometry = new THREE.SphereGeometry(0.52, 48, 48);
-            const material = new THREE.MeshStandardMaterial({ color: node.color, emissive: 0x222222, emissiveIntensity: 0.25, metalness: 0.65, roughness: 0.3 });
+            const geometry = new THREE.SphereGeometry(0.52, 56, 56);
+            const material = new THREE.MeshStandardMaterial({ 
+                color: node.color, 
+                emissive: new THREE.Color(node.color).multiplyScalar(0.35), 
+                emissiveIntensity: 0.28, 
+                metalness: 0.68, 
+                roughness: 0.32,
+                transparent: true
+            });
             const planet = new THREE.Mesh(geometry, material);
-            planet.userData = { url: node.url };
-            planet.position.set(node.pos[0], node.pos[1], node.pos[2]);
+            planet.userData = { url: node.url, color: node.color, idx: idx, isPlanet: true };
+            const initPos = new THREE.Vector3(node.pos[0], node.pos[1], node.pos[2]);
+            planet.position.copy(initPos);
             scene.add(planet);
-            const miniGlow = new THREE.Mesh(new THREE.SphereGeometry(0.68, 24, 24), new THREE.MeshBasicMaterial({ color: node.color, transparent: true, opacity: 0.15, side: THREE.BackSide }));
+            
+            originalPositions.push(initPos.clone());
+            
+            // 呼吸光晕
+            const miniGlow = new THREE.Mesh(
+                new THREE.SphereGeometry(0.68, 28, 28), 
+                new THREE.MeshBasicMaterial({ 
+                    color: node.color, 
+                    transparent: true, 
+                    opacity: 0.18, 
+                    side: THREE.BackSide,
+                    blending: THREE.AdditiveBlending
+                })
+            );
             planet.add(miniGlow);
+            planet.userData.glow = miniGlow;
+            
+            // CSS2D标签
             const div = document.createElement('div');
-            // 修复 undefined：只显示 name
             div.textContent = `${node.name}`;
-            div.style.cssText = `color:#fff; font-size:16px; font-weight:600; text-shadow:0 0 8px rgba(0,0,0,0.5); background:rgba(8,16,32,0.8); backdrop-filter:blur(6px); padding:4px 14px; border-radius:40px; border:1px solid ${new THREE.Color(node.color).getStyle()}; white-space:nowrap; font-family:Inter, sans-serif; pointer-events:none;`;
+            div.style.cssText = `color:#fff; font-size:15px; font-weight:600; text-shadow:0 0 8px rgba(0,0,0,0.6); background:rgba(8,16,32,0.85); backdrop-filter:blur(6px); padding:4px 14px; border-radius:40px; border:1px solid ${new THREE.Color(node.color).getStyle()}; box-shadow:0 0 12px ${new THREE.Color(node.color).getStyle()}44; white-space:nowrap; font-family:Inter, sans-serif; pointer-events:none; transition:0.1s;`;
             const label = new CSS2DObject(div);
             label.position.set(node.pos[0], node.pos[1] - 0.92, node.pos[2]);
             scene.add(label);
-            planetMeshes.push({ mesh: planet, label, posY: node.pos[1] });
+            
+            planetMeshes.push({ 
+                mesh: planet, 
+                label, 
+                origY: node.pos[1],
+                glow: miniGlow,
+                baseColor: new THREE.Color(node.color),
+                idx: idx
+            });
         });
 
-        // 连接线
-        const lineMat = new THREE.LineBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.35 });
-        planetMeshes.forEach(item => {
-            const points = [new THREE.Vector3(0, 0, 0), item.mesh.position.clone()];
-            const geo = new THREE.BufferGeometry().setFromPoints(points);
-            scene.add(new THREE.Line(geo, lineMat));
+        // ========== 流光连接线系统 (动态跟随星球位置) ==========
+        class FlowLineSystem {
+            constructor(scene, startPoint, endMesh, color, planetIndex) {
+                this.scene = scene;
+                this.start = startPoint;
+                this.endMesh = endMesh;
+                this.color = color;
+                this.particleCount = 58;
+                this.pointsObj = null;
+                this.planetIdx = planetIndex;
+                this.createParticles();
+            }
+            createParticles() {
+                const flowGeo = new THREE.BufferGeometry();
+                const positions = new Float32Array(this.particleCount * 3);
+                const opacities = new Float32Array(this.particleCount);
+                for (let i = 0; i < this.particleCount; i++) {
+                    positions[i*3] = 0; positions[i*3+1] = 0; positions[i*3+2] = 0;
+                    opacities[i] = 0;
+                }
+                flowGeo.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+                flowGeo.setAttribute('opacity', new THREE.BufferAttribute(opacities, 1));
+                const particleMat = new THREE.PointsMaterial({ 
+                    color: this.color, 
+                    size: 0.054,
+                    transparent: true,
+                    blending: THREE.AdditiveBlending,
+                    vertexColors: false
+                });
+                this.pointsObj = new THREE.Points(flowGeo, particleMat);
+                this.scene.add(this.pointsObj);
+                // 流动偏移量
+                this.pointsObj.userData.progress = Math.random();
+            }
+            updatePosition(endWorldPos) {
+                if (!this.pointsObj) return;
+                const positionsAttr = this.pointsObj.geometry.attributes.position.array;
+                const opacityAttr = this.pointsObj.geometry.attributes.opacity.array;
+                const startVec = this.start;
+                const endVec = endWorldPos;
+                for (let i = 0; i < this.particleCount; i++) {
+                    const t = i / (this.particleCount - 1);
+                    const px = startVec.x * (1 - t) + endVec.x * t;
+                    const py = startVec.y * (1 - t) + endVec.y * t;
+                    const pz = startVec.z * (1 - t) + endVec.z * t;
+                    positionsAttr[i*3] = px;
+                    positionsAttr[i*3+1] = py;
+                    positionsAttr[i*3+2] = pz;
+                }
+                // 动态流动：沿路径移动光点
+                this.pointsObj.userData.progress += 0.012;
+                if (this.pointsObj.userData.progress > 1) this.pointsObj.userData.progress = 0;
+                const flowOffset = this.pointsObj.userData.progress;
+                for (let i = 0; i < this.particleCount; i++) {
+                    let virtualIdx = (i + Math.floor(flowOffset * this.particleCount)) % this.particleCount;
+                    const t = virtualIdx / (this.particleCount - 1);
+                    opacityAttr[i] = Math.sin(t * Math.PI) * 0.85;
+                }
+                this.pointsObj.geometry.attributes.position.needsUpdate = true;
+                this.pointsObj.geometry.attributes.opacity.needsUpdate = true;
+            }
+        }
+
+        // 存储流光线对象
+        const flowLines = [];
+        const centerPoint = new THREE.Vector3(0, 0, 0);
+        planetMeshes.forEach((item, idx) => {
+            const colorVal = item.baseColor;
+            const flowSys = new FlowLineSystem(scene, centerPoint, item.mesh, colorVal, idx);
+            flowLines.push(flowSys);
         });
 
-        // 粒子系统
-        const particleCount = 1500;
+        // ========== 优雅的旋转动画控制 (一次性转动 · 柔和缓动) ==========
+        let currentRotAngle = 0;          // 当前累积旋转弧度
+        let rotatingAnimation = {
+            active: false,
+            startAngle: 0,
+            targetDelta: 0,       // 目标增量 (弧度)
+            duration: 2200,        // 毫秒，一圈耗时2.2秒，速度适中且比原来快，配合缓动不抢跑
+            startTime: 0,
+            // 缓动函数: easeInOutCubic 提供丝滑起停，中间略快
+            easeFunc: (t) => {
+                if (t < 0.5) return 4 * t * t * t;
+                else return 1 - Math.pow(-2 * t + 2, 3) / 2;
+            }
+        };
+        
+        // 触发一次完整的旋转一周 (2*PI)
+        function triggerRotationAnimation() {
+            // 如果已有动画正在进行，取消当前动画，并基于当前角度重新开始一圈（避免突变）
+            if (rotatingAnimation.active) {
+                // 记录当前角度作为新的起点，目标增量保持完整一周
+                rotatingAnimation.startAngle = currentRotAngle;
+                rotatingAnimation.startTime = performance.now();
+                rotatingAnimation.targetDelta = Math.PI * 2;
+                // 提示保持激活状态不变
+            } else {
+                rotatingAnimation.active = true;
+                rotatingAnimation.startAngle = currentRotAngle;
+                rotatingAnimation.targetDelta = Math.PI * 2;
+                rotatingAnimation.startTime = performance.now();
+                // 更新UI提示
+                const hintDiv = document.getElementById('rotateHint');
+                hintDiv.style.borderColor = '#60ffaa';
+                hintDiv.style.color = '#e0fffa';
+                hintDiv.innerHTML = '🌀 星轨流转 · 数字脉动 🌀<br><span style="font-size:11px;">优雅旋转一周中</span>';
+                // 加强中心球体光效反馈
+                coreSphere.material.emissiveIntensity = 0.85;
+                setTimeout(() => {
+                    if (!rotatingAnimation.active) {
+                        coreSphere.material.emissiveIntensity = 0.55;
+                    } else {
+                        coreSphere.material.emissiveIntensity = 0.7;
+                    }
+                }, 200);
+            }
+        }
+        
+        // 更新旋转动画 (每帧调用)
+        function updateRotationAnimation(nowMs) {
+            if (!rotatingAnimation.active) return false;
+            const elapsed = nowMs - rotatingAnimation.startTime;
+            let progress = Math.min(1, elapsed / rotatingAnimation.duration);
+            const eased = rotatingAnimation.easeFunc(progress);
+            const deltaAngle = rotatingAnimation.targetDelta * eased;
+            // 新的总角度 = 起始角 + 偏移
+            let newAngle = rotatingAnimation.startAngle + deltaAngle;
+            // 规范化角度，避免无限增大
+            currentRotAngle = newAngle;
+            if (progress >= 1.0) {
+                // 动画完成，确保最终角度精确为起始角 + 一周 (保持模2π)
+                rotatingAnimation.active = false;
+                currentRotAngle = rotatingAnimation.startAngle + rotatingAnimation.targetDelta;
+                // 归一化到 [0, 2PI)
+                currentRotAngle = currentRotAngle % (Math.PI * 2);
+                // 恢复UI提示
+                const hintDiv = document.getElementById('rotateHint');
+                hintDiv.style.borderColor = '#3b82f6';
+                hintDiv.style.color = '#bbd9ff';
+                hintDiv.innerHTML = '✨ 点击中央【数字中国】星球 ✨<br><span style="font-size:11px;">启动优雅星轨旋转一周</span>';
+                coreSphere.material.emissiveIntensity = 0.55;
+                return true; // 完成
+            }
+            return false; // 未完成
+        }
+        
+        // 基础旋转工具: 绕Y轴旋转向量
+        function rotateAroundY(vec, angle) {
+            const cosA = Math.cos(angle);
+            const sinA = Math.sin(angle);
+            return new THREE.Vector3(
+                vec.x * cosA + vec.z * sinA,
+                vec.y,
+                vec.z * cosA - vec.x * sinA
+            );
+        }
+        
+        // 更新所有星球位置 (基于旋转角度 + 柔和的呼吸浮动)
+        let animTime = 0;
+        function updatePlanetsPositions(angleRad, timeVal) {
+            planetMeshes.forEach((item, idx) => {
+                const origVec = originalPositions[idx];
+                let rotatedPos = rotateAroundY(origVec, angleRad);
+                // 微幅上下浮动，不干扰旋转整体感
+                const floatY = Math.sin(timeVal * 0.95 + idx) * 0.022;
+                const finalPos = new THREE.Vector3(
+                    rotatedPos.x,
+                    rotatedPos.y + floatY,
+                    rotatedPos.z
+                );
+                item.mesh.position.copy(finalPos);
+                item.label.position.set(finalPos.x, finalPos.y - 0.92, finalPos.z);
+                // 星球独立呼吸缩放
+                const breath = Math.sin(timeVal * 0.7 + idx) * 0.028 + 1.0;
+                item.mesh.scale.set(breath, breath, breath);
+                if (item.glow) {
+                    const glowIntensity = Math.sin(timeVal * 0.7 + idx) * 0.055 + 0.18;
+                    item.glow.material.opacity = glowIntensity;
+                    item.glow.scale.set(breath * 1.35, breath * 1.35, breath * 1.35);
+                }
+            });
+        }
+        
+        // 更新流光连接线 (基于星球实时坐标)
+        function updateAllFlowLines() {
+            planetMeshes.forEach((item, idx) => {
+                const planetWorldPos = item.mesh.position.clone();
+                if (flowLines[idx]) flowLines[idx].updatePosition(planetWorldPos);
+            });
+        }
+        
+        // ---------- 鼠标悬停及点击交互 (中心圆球 + 行星) ----------
+        const raycaster = new THREE.Raycaster();
+        const mouseVec = new THREE.Vector2();
+        let hoveredCore = false;
+        let hoveredPlanet = null;
+        
+        function handleMouseInteractivity(event, isClick = false) {
+            mouseVec.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
+            mouseVec.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
+            raycaster.setFromCamera(mouseVec, camera);
+            const interactiveObjects = planetMeshes.map(p => p.mesh);
+            interactiveObjects.push(coreSphere);
+            const intersects = raycaster.intersectObjects(interactiveObjects);
+            
+            if (isClick) {
+                if (intersects.length > 0) {
+                    const hit = intersects[0].object;
+                    if (hit.userData && hit.userData.isCore) {
+                        // 点击中央星球 -> 启动一次性旋转动画（柔和一圈）
+                        triggerRotationAnimation();
+                        // 快速反馈
+                        coreInteractiveRing.material.opacity = 0.65;
+                        setTimeout(() => {
+                            if (!rotatingAnimation.active && coreInteractiveRing) coreInteractiveRing.material.opacity = 0.25;
+                            else if (coreInteractiveRing) coreInteractiveRing.material.opacity = 0.45;
+                        }, 300);
+                    } else if (hit.userData && hit.userData.isPlanet) {
+                        const url = hit.userData.url;
+                        if (url) window.location.href = url;
+                    }
+                }
+            } else {
+                // 悬停逻辑: 中心球体高亮
+                const coreHit = intersects.find(i => i.object === coreSphere);
+                if (coreHit) {
+                    if (!hoveredCore) {
+                        document.body.style.cursor = 'pointer';
+                        coreSphere.material.emissiveIntensity = 0.85;
+                        coreInteractiveRing.material.opacity = 0.5;
+                        hoveredCore = true;
+                    }
+                } else {
+                    if (hoveredCore) {
+                        document.body.style.cursor = 'default';
+                        coreSphere.material.emissiveIntensity = 0.55;
+                        coreInteractiveRing.material.opacity = 0.25;
+                        hoveredCore = false;
+                    }
+                }
+                // 普通星球的高亮 (独立于核心)
+                const planetIntersects = raycaster.intersectObjects(planetMeshes.map(p => p.mesh));
+                if (hoveredPlanet && planetIntersects.length === 0) {
+                    hoveredPlanet.material.emissiveIntensity = 0.28;
+                    hoveredPlanet.scale.set(1, 1, 1);
+                    if(hoveredPlanet.userData.glow) hoveredPlanet.userData.glow.material.opacity = 0.18;
+                    hoveredPlanet = null;
+                    if (!hoveredCore) document.body.style.cursor = 'default';
+                }
+                if (planetIntersects.length > 0) {
+                    const planet = planetIntersects[0].object;
+                    if (planet !== hoveredPlanet) {
+                        if (hoveredPlanet) {
+                            hoveredPlanet.material.emissiveIntensity = 0.28;
+                            hoveredPlanet.scale.set(1, 1, 1);
+                            if(hoveredPlanet.userData.glow) hoveredPlanet.userData.glow.material.opacity = 0.18;
+                        }
+                        hoveredPlanet = planet;
+                        planet.material.emissiveIntensity = 0.68;
+                        planet.scale.set(1.08, 1.08, 1.08);
+                        if(planet.userData.glow) planet.userData.glow.material.opacity = 0.32;
+                        document.body.style.cursor = 'pointer';
+                    }
+                } else if (!hoveredCore && hoveredPlanet === null) {
+                    document.body.style.cursor = 'default';
+                }
+            }
+        }
+        
+        window.addEventListener('mousemove', (e) => handleMouseInteractivity(e, false));
+        window.addEventListener('click', (e) => handleMouseInteractivity(e, true));
+        
+        // ========== 光照与环境 ==========
+        const ambientLight = new THREE.AmbientLight(0x2a2a3a);
+        scene.add(ambientLight);
+        const dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
+        dirLight.position.set(3, 5, 2);
+        dirLight.castShadow = true;
+        scene.add(dirLight);
+        const backLight = new THREE.PointLight(0x4466cc, 0.7);
+        backLight.position.set(-2, -1, -3);
+        scene.add(backLight);
+        const fillLight = new THREE.PointLight(0xffaa66, 0.5);
+        fillLight.position.set(1, 2, 2);
+        scene.add(fillLight);
+        const coreLight = new THREE.PointLight(0x3b82f6, 1.0, 12);
+        coreLight.position.set(0, 0, 0);
+        scene.add(coreLight);
+        
+        // 全域粒子星云系统
+        const particleCount = 2400;
         const particleGeo = new THREE.BufferGeometry();
         const particlePos = new Float32Array(particleCount * 3);
+        const particleColor = new Float32Array(particleCount * 3);
         for (let i = 0; i < particleCount; i++) {
-            const rad = 2.0 + Math.random() * 1.2;
+            const rad = 2.4 + Math.random() * 1.6;
             const theta = Math.random() * Math.PI * 2;
             const phi = Math.acos(2 * Math.random() - 1);
             particlePos[i*3] = rad * Math.sin(phi) * Math.cos(theta);
             particlePos[i*3+1] = rad * Math.sin(phi) * Math.sin(theta) * 0.6;
             particlePos[i*3+2] = rad * Math.cos(phi);
+            const dist = Math.sqrt(particlePos[i*3]*particlePos[i*3] + particlePos[i*3+1]*particlePos[i*3+1] + particlePos[i*3+2]*particlePos[i*3+2]);
+            const color = new THREE.Color(0x3b82f6).lerp(new THREE.Color(0xaa66ff), dist / 4.5);
+            particleColor[i*3] = color.r;
+            particleColor[i*3+1] = color.g;
+            particleColor[i*3+2] = color.b;
         }
         particleGeo.setAttribute('position', new THREE.BufferAttribute(particlePos, 3));
-        const particleSys = new THREE.Points(particleGeo, new THREE.PointsMaterial({ color: 0x5a9eff, size: 0.045, transparent: true }));
+        particleGeo.setAttribute('color', new THREE.BufferAttribute(particleColor, 3));
+        const particleSys = new THREE.Points(particleGeo, new THREE.PointsMaterial({ size: 0.044, transparent: true, vertexColors: true, blending: THREE.AdditiveBlending, sizeAttenuation: true }));
         scene.add(particleSys);
-
-        // 光照
-        const ambientLight = new THREE.AmbientLight(0x222222);
-        scene.add(ambientLight);
-        const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
-        dirLight.position.set(3, 5, 2);
-        scene.add(dirLight);
-        const backLight = new THREE.PointLight(0x4466cc, 0.5);
-        backLight.position.set(-2, -1, -3);
-        scene.add(backLight);
-        const fillLight = new THREE.PointLight(0xffaa66, 0.4);
-        fillLight.position.set(1, 2, 2);
-        scene.add(fillLight);
-
-        // 点击跳转
-        const raycaster = new THREE.Raycaster();
-        const mouse = new THREE.Vector2();
-        window.addEventListener('click', (event) => {
-            mouse.x = (event.clientX / renderer.domElement.clientWidth) * 2 - 1;
-            mouse.y = -(event.clientY / renderer.domElement.clientHeight) * 2 + 1;
-            raycaster.setFromCamera(mouse, camera);
-            const intersects = raycaster.intersectObjects(planetMeshes.map(p => p.mesh));
-            if (intersects.length > 0) {
-                const url = intersects[0].object.userData.url;
-                if (url) window.location.href = url;
-            }
-        });
-
-        // 动画
-        let time = 0;
+        
+        // ========== 动态渲染循环 ==========
+        let lastFrameTime = 0;
         function animate() {
             requestAnimationFrame(animate);
-            time += 0.008;
-            particleSys.rotation.y = time * 0.1;
-            ringPoints.rotation.z = Math.sin(time * 0.5) * 0.1;
-            ringPoints.rotation.x = Math.cos(time * 0.3) * 0.05;
-            stars.rotation.y += 0.0003;
-            stars2.rotation.x += 0.0002;
-            planetMeshes.forEach((item, idx) => {
-                const offsetY = Math.sin(time * 1.0 + idx) * 0.02;
-                item.mesh.position.y = item.posY + offsetY;
-                if (item.label) item.label.position.y = item.posY - 0.92 + offsetY;
+            const nowMs = performance.now();
+            const deltaSec = Math.min(0.033, (nowMs - lastFrameTime) / 1000);
+            lastFrameTime = nowMs;
+            animTime += deltaSec * 1.2;
+            
+            // 1. 星空自转
+            starLayers.forEach(layer => {
+                layer.rotation.y += layer.userData.speed;
+                layer.rotation.x += layer.userData.speed * 0.5;
             });
+            
+            // 2. 中心呼吸及光环动态
+            const breathCore = Math.sin(animTime * 0.8) * 0.04 + 0.96;
+            coreSphere.scale.set(breathCore, breathCore, breathCore);
+            glowSphere.scale.set(breathCore * 1.13, breathCore * 1.13, breathCore * 1.13);
+            glowSphere.material.opacity = Math.sin(animTime * 0.7) * 0.045 + 0.12;
+            flowRing.rotation.y = animTime * 0.28;
+            flowRing.material.opacity = Math.sin(animTime * 1.1) * 0.2 + 0.65;
+            ringPoints.rotation.z = Math.sin(animTime * 0.4) * 0.1;
+            ringPoints.rotation.x = Math.cos(animTime * 0.3) * 0.05;
+            ringPoints.rotation.y = animTime * 0.12;
+            coreInteractiveRing.rotation.z += 0.006;
+            coreLight.intensity = Math.sin(animTime * 0.65) * 0.28 + 0.95;
+            
+            // 3. 处理旋转动画 (一次性柔和转动)
+            updateRotationAnimation(nowMs);
+            
+            // 4. 更新所有星球位置 (基于当前旋转角)
+            updatePlanetsPositions(currentRotAngle, animTime);
+            
+            // 5. 更新所有流光线条
+            updateAllFlowLines();
+            
+            // 6. 粒子星云缓慢浮动
+            particleSys.rotation.y = animTime * 0.07;
+            particleSys.rotation.x = animTime * 0.035;
+            const particleScale = Math.sin(animTime * 0.2) * 0.02 + 1.0;
+            particleSys.scale.set(particleScale, particleScale, particleScale);
+            
             controls.update();
             renderer.render(scene, camera);
             labelRenderer.render(scene, camera);
+            
+            // 隐藏加载提示
+            const loadingDiv = document.getElementById('loading');
+            if (loadingDiv && loadingDiv.style.display !== 'none') {
+                loadingDiv.style.opacity = '0';
+                setTimeout(() => { if(loadingDiv) loadingDiv.style.display = 'none'; }, 600);
+            }
         }
-        animate();
+        
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
             labelRenderer.setSize(window.innerWidth, window.innerHeight);
         });
+        
+        animate();
     </script>
 </body>
 </html>
